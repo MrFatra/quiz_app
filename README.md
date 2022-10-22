@@ -1,16 +1,10 @@
-# quiz_app
+# QUIZ APP BUILD IN FLUTTER
 
-A new Flutter project.
+Ini adalah aplikasi Quiz yang cocok untuk kalangan 'programmer'
 
-## Getting Started
+## Description
+API yang saya gunakan adalah dari quizapi.io kalian bisa mengunjunginya di [Quiz API](https://quizapi.io/)
 
-This project is a starting point for a Flutter application.
+## Disclaimer
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Tujuan saya dalam membuat aplikasi ini adalah hanya untuk 'bersenang-senang' saja.
