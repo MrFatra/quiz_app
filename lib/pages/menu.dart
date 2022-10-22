@@ -1,12 +1,13 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
-import 'package:quiz_app/api/programing.dart';
+import 'package:quiz_app/api/questions.dart';
 import 'package:quiz_app/constant.dart';
 
 // third-party package
 import 'package:sizer/sizer.dart';
+
+import 'code.page.dart';
 
 class Menu extends StatelessWidget {
   const Menu({super.key});
@@ -40,21 +41,80 @@ class Menu extends StatelessWidget {
             children: [
               InkWell(
                 onTap: () async {
-                  final questionRequest = await QuestionAPI()
-                      .getQuestion(
-                        category: 'Code',
-                        difficulty: 'easy',
-                        limit: '20',
-                        tags: '',
-                      )
-                      .then(
-                        (result) => result.fold(
-                          (l) => debugPrint(l),
-                          (r) => debugPrint(
-                            r.toString(),
-                          ),
+                  String difficulty = '';
+                  await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text('Pilih tingkat kesulitan : '),
+                            SizedBox(height: 40),
+                            Container(
+                              margin: EdgeInsets.only(bottom: 30),
+                              width: 100.w,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  difficulty = 'easy';
+                                },
+                                child: Text('EZ'),
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(25)),
+                                    padding: EdgeInsets.all(17),
+                                    backgroundColor: kSecondaryColor),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(bottom: 30),
+                              width: 100.w,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  difficulty = 'medium';
+                                },
+                                child: Text('MEDIUM'),
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(25)),
+                                    padding: EdgeInsets.all(17),
+                                    backgroundColor: kSecondaryColor),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(bottom: 20),
+                              width: 100.w,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  difficulty = 'hard';
+                                },
+                                child: Text('HARD'),
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(25)),
+                                    padding: EdgeInsets.all(17),
+                                    backgroundColor: kSecondaryColor),
+                              ),
+                            ),
+                          ],
                         ),
                       );
+                    },
+                  );
+                  debugPrint(difficulty);
+                  final res = await QuestionAPI()
+                      .getQuestion(
+                          category: 'Code',
+                          difficulty: difficulty,
+                          limit: '20',
+                          tags: '')
+                      .then((foldValue) =>
+                          foldValue.fold((l) => debugPrint(l), (r) {
+                            Get.to(CodePage(questionData: r));
+                          }));
                 },
                 child: Card(
                   elevation: 7,

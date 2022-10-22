@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:quiz_app/constant.dart';
 import 'package:quiz_app/pages/menu.dart';
 import 'package:quiz_app/utils/transparent_scroll.util.dart';
@@ -12,7 +13,7 @@ class MainMaterial extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Sizer(
-      builder: (context, orientation, deviceType) => MaterialApp(
+      builder: (context, orientation, deviceType) => GetMaterialApp(
         builder: (context, child) => ScrollConfiguration(
           behavior: TransparentScrollBehavior(),
           child: child!,
