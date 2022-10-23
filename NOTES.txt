@@ -1,20 +1,8 @@
 
 NEXT PROGRESS :
 
-- looping page PageView.builder()
+- cari UI
 - bikin page question (cukup 1 buat pageview.builder)
-- control pageview ketika jawab next (pake pageController)
 - pengkondisian jawaban salah atau benar
 - jika jawaban benar skor naik, sebaliknya turun
 - jika sudah limit soal maka show score
-
-
-
-NEXT UPDATE :
-
-- add user account untuk save data pengguna
-
-
-NEXT HOPE : 
-
-- BUAT API SENDIRI!

@@ -26,6 +26,8 @@ class QuestionAPI extends GetConnect {
       final data = Question.questionFromSnapshot(res.body);
       for (var mapData in data) {
         debugPrint(mapData.correctAnswer);
+
+        // ! HANDLE NULL DARI API
         if (mapData.correctAnswer == '-') {
           // Check Null
           mapData.correctAnswer = CorrectAnswers.correctAnswerFromSnapshot(

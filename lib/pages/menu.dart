@@ -57,6 +57,7 @@ class Menu extends StatelessWidget {
                               child: ElevatedButton(
                                 onPressed: () {
                                   difficulty = 'easy';
+                                  Get.back();
                                 },
                                 child: Text('EZ'),
                                 style: ElevatedButton.styleFrom(
@@ -73,6 +74,7 @@ class Menu extends StatelessWidget {
                               child: ElevatedButton(
                                 onPressed: () {
                                   difficulty = 'medium';
+                                  Get.back();
                                 },
                                 child: Text('MEDIUM'),
                                 style: ElevatedButton.styleFrom(
@@ -89,6 +91,7 @@ class Menu extends StatelessWidget {
                               child: ElevatedButton(
                                 onPressed: () {
                                   difficulty = 'hard';
+                                  Get.back();
                                 },
                                 child: Text('HARD'),
                                 style: ElevatedButton.styleFrom(
@@ -104,7 +107,6 @@ class Menu extends StatelessWidget {
                       );
                     },
                   );
-                  debugPrint(difficulty);
                   final res = await QuestionAPI()
                       .getQuestion(
                           category: 'Code',
@@ -113,7 +115,7 @@ class Menu extends StatelessWidget {
                           tags: '')
                       .then((foldValue) =>
                           foldValue.fold((l) => debugPrint(l), (r) {
-                            Get.to(CodePage(questionData: r));
+                            Get.to(() => QuestionPage(questionData: r));
                           }));
                 },
                 child: Card(
