@@ -24,9 +24,12 @@ class MainMaterial extends StatelessWidget {
                 displayColor: kPrimaryTextColor,
                 fontFamily: 'Raleway',
               ),
+          appBarTheme: const AppBarTheme(
+              toolbarTextStyle: TextStyle(color: kPrimaryTextColor),
+              iconTheme: IconThemeData(color: kPrimaryTextColor)),
         ),
         debugShowCheckedModeBanner: false,
-        home: const Menu(),
+        home: const MenuPage(),
       ),
     );
   }

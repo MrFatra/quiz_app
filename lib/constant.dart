@@ -11,3 +11,4 @@ const kColor4 = Color(0xffCFFF8D);
 
 const title = TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
 const subtitle = TextStyle(fontSize: 16, fontWeight: FontWeight.w600);
+const regularMediumStyle = TextStyle(fontWeight: FontWeight.w600);

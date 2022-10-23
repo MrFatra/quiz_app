@@ -24,17 +24,6 @@ class QuestionAPI extends GetConnect {
 
     if (res.isOk) {
       final data = Question.questionFromSnapshot(res.body);
-      for (var mapData in data) {
-        debugPrint(mapData.correctAnswer);
-
-        // ! HANDLE NULL DARI API
-        if (mapData.correctAnswer == '-') {
-          // Check Null
-          mapData.correctAnswer = CorrectAnswers.correctAnswerFromSnapshot(
-              mapData.correctAnswers); // String
-          return right(data);
-        }
-      }
       return right(data);
     } else if (res.body == null) {
       debugPrint('Tidak ada data');

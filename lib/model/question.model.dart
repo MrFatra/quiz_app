@@ -9,7 +9,7 @@ class Question {
   final Answers answers;
   final bool multipleCorrectAnswers;
   final CorrectAnswers correctAnswers;
-  String correctAnswer;
+  final String correctAnswer;
   final String explanation;
   final String tip;
   final List<Tag> tags;

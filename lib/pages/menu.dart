@@ -7,10 +7,10 @@ import 'package:quiz_app/constant.dart';
 // third-party package
 import 'package:sizer/sizer.dart';
 
-import 'code.page.dart';
+import 'question.page.dart';
 
-class Menu extends StatelessWidget {
-  const Menu({super.key});
+class MenuPage extends StatelessWidget {
+  const MenuPage({super.key});
 
   @override
   Widget build(BuildContext context) {

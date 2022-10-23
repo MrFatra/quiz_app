@@ -1,6 +1,7 @@
 
 NEXT PROGRESS :
 
+- bikin validate buat jawaban dari list answers
 - cari UI
 - bikin page question (cukup 1 buat pageview.builder)
 - pengkondisian jawaban salah atau benar
