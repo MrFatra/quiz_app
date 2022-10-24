@@ -1,7 +1,11 @@
 
 NEXT PROGRESS :
 
-- bikin validate buat jawaban dari list answers
+- buat question page jadi model template
+- pake templatenya
+- list category yang belum dibuat :
+    - Linux,
+    - dll. search cat by random question
 - cari UI
 - bikin page question (cukup 1 buat pageview.builder)
 - pengkondisian jawaban salah atau benar
