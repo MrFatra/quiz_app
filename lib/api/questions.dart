@@ -5,6 +5,7 @@ import 'package:quiz_app/auth/key.dart';
 import 'package:quiz_app/model/correct_answer.model.dart';
 
 import '../model/question.model.dart';
+import '../utils/validate_answer.dart';
 
 class QuestionAPI extends GetConnect {
   Future<Either<String, List<Question>>> getQuestion(
@@ -24,6 +25,12 @@ class QuestionAPI extends GetConnect {
 
     if (res.isOk) {
       final data = Question.questionFromSnapshot(res.body);
+
+      // validate answer
+      for (var mapData in data) {
+        mapData.correctAnswer = searchCorrectAnswer(mapData.correctAnswers);
+      }
+
       return right(data);
     } else if (res.body == null) {
       debugPrint('Tidak ada data');

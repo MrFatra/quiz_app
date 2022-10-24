@@ -4,7 +4,6 @@ import 'package:quiz_app/constant.dart';
 import 'package:quiz_app/pages/menu.dart';
 import 'package:sizer/sizer.dart';
 
-import '../model/correct_answer.model.dart';
 import '../model/question.model.dart';
 
 class QuestionPage extends StatelessWidget {
@@ -22,7 +21,7 @@ class QuestionPage extends StatelessWidget {
         leadingWidth: 50.w,
         leading: InkWell(
           borderRadius: BorderRadius.circular(50),
-          onTap: () => Get.off(() => MenuPage()),
+          onTap: () => Get.off(() => const MenuPage()),
           child: Container(
             margin: const EdgeInsets.all(5),
             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
@@ -49,25 +48,6 @@ class QuestionPage extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           controller: pageController,
           itemBuilder: (context, index) {
-            debugPrint(
-                'Jawaban dari pageview: ${questionData[index].correctAnswer}');
-            if (questionData[index].correctAnswer == '-') {
-              debugPrint('correct answer = -');
-            } else {
-              debugPrint('correct answer terisi');
-            }
-            debugPrint(
-                '\nA: ${questionData[index].correctAnswers.answerACorrect}');
-            debugPrint(
-                'B: ${questionData[index].correctAnswers.answerBCorrect}');
-            debugPrint(
-                'C: ${questionData[index].correctAnswers.answerCCorrect}');
-            debugPrint(
-                'D: ${questionData[index].correctAnswers.answerDCorrect}');
-            debugPrint(
-                'E: ${questionData[index].correctAnswers.answerECorrect}');
-            debugPrint(
-                'F: ${questionData[index].correctAnswers.answerFCorrect}');
             return Container(
               padding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
               child: Column(

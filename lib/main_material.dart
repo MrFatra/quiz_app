@@ -27,6 +27,11 @@ class MainMaterial extends StatelessWidget {
           appBarTheme: const AppBarTheme(
               toolbarTextStyle: TextStyle(color: kPrimaryTextColor),
               iconTheme: IconThemeData(color: kPrimaryTextColor)),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+                foregroundColor: kPrimaryColor,
+                textStyle: const TextStyle(fontWeight: FontWeight.w600)),
+          ),
         ),
         debugShowCheckedModeBanner: false,
         home: const MenuPage(),

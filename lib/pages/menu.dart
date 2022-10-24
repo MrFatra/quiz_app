@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:quiz_app/api/questions.dart';
 import 'package:quiz_app/constant.dart';
+import 'package:quiz_app/widgets/loading_dialog.dart';
 
 // third-party package
 import 'package:sizer/sizer.dart';
@@ -107,16 +108,36 @@ class MenuPage extends StatelessWidget {
                       );
                     },
                   );
-                  final res = await QuestionAPI()
-                      .getQuestion(
-                          category: 'Code',
-                          difficulty: difficulty,
-                          limit: '20',
-                          tags: '')
-                      .then((foldValue) =>
-                          foldValue.fold((l) => debugPrint(l), (r) {
-                            Get.to(() => QuestionPage(questionData: r));
-                          }));
+
+                  // ignore: use_build_context_synchronously
+                  loadingData(context,
+                          future: QuestionAPI().getQuestion(
+                              category: 'Code',
+                              difficulty: difficulty,
+                              limit: '20',
+                              tags: ''),
+                          title: 'Loading')
+                      .then((resultData) => resultData.fold(
+                          (l) => showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Kesalahan'),
+                                      Divider(),
+                                    ],
+                                  ),
+                                  content: Text('Mohon coba lagi.'),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () => Get.back(),
+                                        child: Text('OK'))
+                                  ],
+                                ),
+                              ),
+                          (r) => Get.to(() => QuestionPage(questionData: r))));
                 },
                 child: Card(
                   elevation: 7,
