@@ -1,7 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:quiz_app/constant.dart';
+
+import '../constant.dart';
 
 Future<T> loadingData<T>(BuildContext context,
     {required Future<T> future, required String title}) async {

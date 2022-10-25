@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
-import 'package:quiz_app/api/questions.dart';
+import 'package:quiz_app/api/question.api.dart';
 import 'package:quiz_app/auth/question.auth.dart';
 import 'package:quiz_app/constant.dart';
 import 'package:quiz_app/utils/difficulty.dart';

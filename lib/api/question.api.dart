@@ -1,9 +1,8 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:quiz_app/auth/key.dart';
-import 'package:quiz_app/model/correct_answer.model.dart';
 
+import '../auth/key.dart';
 import '../model/question.model.dart';
 import '../utils/validate_answer.dart';
 
@@ -29,6 +28,11 @@ class QuestionAPI extends GetConnect {
       // validate answer
       for (var mapData in data) {
         mapData.correctAnswer = searchCorrectAnswer(mapData.correctAnswers);
+
+        // avoid multiple answer
+        if (mapData.multipleCorrectAnswers == true) {
+          data.remove(mapData);
+        }
       }
 
       return right(data);

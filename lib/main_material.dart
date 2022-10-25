@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:quiz_app/constant.dart';
-import 'package:quiz_app/pages/menu.dart';
-import 'package:quiz_app/utils/transparent_scroll.util.dart';
-
-// third-party package
 import 'package:sizer/sizer.dart';
+
+import '../constant.dart';
+import '../pages/menu.dart';
+import '../utils/transparent_scroll.util.dart';
 
 class MainMaterial extends StatelessWidget {
   const MainMaterial({super.key});

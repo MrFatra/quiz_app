@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../api/questions.dart';
+import '../api/question.api.dart';
 import '../pages/question.page.dart';
 import '../widgets/loading_dialog.dart';
 
