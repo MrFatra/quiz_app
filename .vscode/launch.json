@@ -7,7 +7,7 @@
         {
             "name": "quiz_app",
             "request": "launch",
-            "program": "lib/entry.dart",
+            "program": "lib/main.dart",
             "type": "dart"
         },
         {
