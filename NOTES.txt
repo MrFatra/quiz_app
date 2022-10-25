@@ -1,7 +1,6 @@
 
 NEXT PROGRESS :
 
-- cari UI
-- pengkondisian jawaban salah atau benar
-- jika jawaban benar skor naik, sebaliknya turun
+- timer belum dibuat
 - jika sudah limit soal maka show score
+- bug hunting
