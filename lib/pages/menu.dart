@@ -1,8 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:quiz_app/api/questions.dart';
+import 'package:quiz_app/auth/question.auth.dart';
 import 'package:quiz_app/constant.dart';
+import 'package:quiz_app/utils/difficulty.dart';
 import 'package:quiz_app/widgets/loading_dialog.dart';
 
 // third-party package
@@ -40,104 +44,15 @@ class MenuPage extends StatelessWidget {
             crossAxisCount: 2,
             scrollDirection: Axis.vertical,
             children: [
+              // ! Programming Category
               InkWell(
                 onTap: () async {
-                  String difficulty = '';
-                  await showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Text('Pilih tingkat kesulitan : '),
-                            SizedBox(height: 40),
-                            Container(
-                              margin: EdgeInsets.only(bottom: 30),
-                              width: 100.w,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  difficulty = 'easy';
-                                  Get.back();
-                                },
-                                child: Text('EZ'),
-                                style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(25)),
-                                    padding: EdgeInsets.all(17),
-                                    backgroundColor: kSecondaryColor),
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(bottom: 30),
-                              width: 100.w,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  difficulty = 'medium';
-                                  Get.back();
-                                },
-                                child: Text('MEDIUM'),
-                                style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(25)),
-                                    padding: EdgeInsets.all(17),
-                                    backgroundColor: kSecondaryColor),
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(bottom: 20),
-                              width: 100.w,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  difficulty = 'hard';
-                                  Get.back();
-                                },
-                                child: Text('HARD'),
-                                style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(25)),
-                                    padding: EdgeInsets.all(17),
-                                    backgroundColor: kSecondaryColor),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
+                  final difficulty = await chooseDifficulty(context);
 
-                  // ignore: use_build_context_synchronously
-                  loadingData(context,
-                          future: QuestionAPI().getQuestion(
-                              category: 'Code',
-                              difficulty: difficulty,
-                              limit: '20',
-                              tags: ''),
-                          title: 'Loading')
-                      .then((resultData) => resultData.fold(
-                          (l) => showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text('Kesalahan'),
-                                      Divider(),
-                                    ],
-                                  ),
-                                  content: Text('Mohon coba lagi.'),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () => Get.back(),
-                                        child: Text('OK'))
-                                  ],
-                                ),
-                              ),
-                          (r) => Get.to(() => QuestionPage(questionData: r))));
+                  if (difficulty != '') {
+                    getQuestionData(context,
+                        difficulty: difficulty, category: 'Code');
+                  }
                 },
                 child: Card(
                   elevation: 7,
@@ -161,110 +76,170 @@ class MenuPage extends StatelessWidget {
                   ),
                 ),
               ),
-              Card(
-                elevation: 7,
-                shadowColor: const Color(0xff47B5FF),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Lottie.asset(
-                      'assets/anim/artist.json',
-                      fit: BoxFit.cover,
-                      height: 15.h,
-                    ),
-                    Text(
-                      'Seni',
-                      style: subtitle,
-                    ),
-                  ],
-                ),
-              ),
-              Card(
-                elevation: 7,
-                shadowColor: const Color(0xff47B5FF),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Lottie.asset(
-                      'assets/anim/mathematics.json',
-                      fit: BoxFit.cover,
-                      height: 15.h,
-                    ),
-                    Text(
-                      'Matematika',
-                      style: subtitle,
-                    ),
-                  ],
+
+              // ! Linux Category
+              InkWell(
+                onTap: () async {
+                  final difficulty = await chooseDifficulty(context);
+
+                  if (difficulty != '') {
+                    getQuestionData(context,
+                        difficulty: difficulty, category: 'Linux');
+                  }
+                },
+                child: Card(
+                  elevation: 7,
+                  shadowColor: const Color(0xff47B5FF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Lottie.asset(
+                        'assets/anim/artist.json',
+                        fit: BoxFit.cover,
+                        height: 15.h,
+                      ),
+                      Text(
+                        'Linux',
+                        style: subtitle,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              Card(
-                elevation: 7,
-                shadowColor: const Color(0xff47B5FF),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Lottie.asset(
-                      'assets/anim/boy-science.json',
-                      fit: BoxFit.cover,
-                      height: 15.h,
-                    ),
-                    Text(
-                      'Sains',
-                      style: subtitle,
-                    ),
-                  ],
-                ),
-              ),
-              Card(
-                elevation: 7,
-                shadowColor: const Color(0xff47B5FF),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Lottie.asset(
-                      'assets/anim/book-search.json',
-                      fit: BoxFit.cover,
-                      height: 15.h,
-                    ),
-                    Text(
-                      'Sejarah',
-                      style: subtitle,
-                    ),
-                  ],
+
+              // ! CMS Category
+              InkWell(
+                onTap: () async {
+                  final difficulty = await chooseDifficulty(context);
+
+                  if (difficulty != '') {
+                    getQuestionData(context,
+                        difficulty: difficulty, category: 'CMS');
+                  }
+                },
+                child: Card(
+                  elevation: 7,
+                  shadowColor: const Color(0xff47B5FF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Lottie.asset(
+                        'assets/anim/mathematics.json',
+                        fit: BoxFit.cover,
+                        height: 15.h,
+                      ),
+                      Text(
+                        'CMS',
+                        style: subtitle,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              Card(
-                elevation: 7,
-                shadowColor: const Color(0xff47B5FF),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+
+              // ! Docker Category
+              InkWell(
+                onTap: () async {
+                  final difficulty = await chooseDifficulty(context);
+
+                  if (difficulty != '') {
+                    getQuestionData(context,
+                        difficulty: difficulty, category: 'Docker');
+                  }
+                },
+                child: Card(
+                  elevation: 7,
+                  shadowColor: const Color(0xff47B5FF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Lottie.asset(
+                        'assets/anim/boy-science.json',
+                        fit: BoxFit.cover,
+                        height: 15.h,
+                      ),
+                      Text(
+                        'Docker',
+                        style: subtitle,
+                      ),
+                    ],
+                  ),
                 ),
-                borderOnForeground: true,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Lottie.asset(
-                      'assets/anim/playing-music.json',
-                      fit: BoxFit.cover,
-                      height: 15.h,
-                    ),
-                    Text(
-                      'Musik',
-                      style: subtitle,
-                    ),
-                  ],
+              ),
+
+              // ! SQL Category
+              InkWell(
+                onTap: () async {
+                  final difficulty = await chooseDifficulty(context);
+
+                  if (difficulty != '') {
+                    getQuestionData(context,
+                        difficulty: difficulty, category: 'SQL');
+                  }
+                },
+                child: Card(
+                  elevation: 7,
+                  shadowColor: const Color(0xff47B5FF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Lottie.asset(
+                        'assets/anim/book-search.json',
+                        fit: BoxFit.cover,
+                        height: 15.h,
+                      ),
+                      Text(
+                        'SQL',
+                        style: subtitle,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // ! DevOps Category
+              InkWell(
+                onTap: () async {
+                  final difficulty = await chooseDifficulty(context);
+
+                  if (difficulty != '') {
+                    getQuestionData(context,
+                        difficulty: difficulty, category: 'DevOps');
+                  }
+                },
+                child: Card(
+                  elevation: 7,
+                  shadowColor: const Color(0xff47B5FF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  borderOnForeground: true,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Lottie.asset(
+                        'assets/anim/playing-music.json',
+                        fit: BoxFit.cover,
+                        height: 15.h,
+                      ),
+                      Text(
+                        'DevOps',
+                        style: subtitle,
+                      ),
+                    ],
+                  ),
                 ),
               )
             ],
