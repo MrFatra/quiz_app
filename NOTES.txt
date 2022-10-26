@@ -2,5 +2,6 @@
 NEXT PROGRESS :
 
 - timer belum dibuat
+- timer builder example (pub.dev)
 - jika sudah limit soal maka show score
 - bug hunting
