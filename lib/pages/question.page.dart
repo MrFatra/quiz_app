@@ -3,20 +3,23 @@ import 'package:get/get.dart';
 import 'package:quiz_app/constant.dart';
 import 'package:quiz_app/pages/menu.dart';
 import 'package:sizer/sizer.dart';
+import 'package:timer_builder/timer_builder.dart';
 
 import '../model/question.model.dart';
 import '../utils/show_answer.dart';
 
+// ignore: must_be_immutable
 class QuestionPage extends StatelessWidget {
-  const QuestionPage({super.key, required this.questionData});
+  QuestionPage(
+      {super.key, required this.questionData, required this.timePerQuestion});
 
   final List<Question> questionData;
+  int timePerQuestion;
 
   @override
   Widget build(BuildContext context) {
     //* VAR DECLARATION
     PageController pageController = PageController();
-    num time = 0;
     RxInt score = 0.obs;
     RxString answer = ''.obs;
     RxBool visibleAnswer = false.obs;
@@ -68,17 +71,26 @@ class QuestionPage extends StatelessWidget {
                           Align(
                             alignment: const Alignment(1, -1),
                             child: Container(
-                              margin: EdgeInsets.only(bottom: 15),
+                              margin: const EdgeInsets.only(bottom: 15),
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color: kPrimaryColor, width: 2),
                                   shape: BoxShape.circle),
                               child: CircleAvatar(
                                 backgroundColor: Colors.transparent,
-                                child: Text(
-                                  time.toString(),
-                                  style: subtitle.copyWith(
-                                      color: kSecondaryTextColor),
+                                child: TimerBuilder.periodic(
+                                  const Duration(seconds: 1),
+                                  builder: (context) {
+                                    timePerQuestion -= 1;
+                                    if (timePerQuestion < 0) {
+                                      timePerQuestion = 15;
+                                      pageController.nextPage(
+                                        duration: const Duration(seconds: 1),
+                                        curve: Curves.fastLinearToSlowEaseIn,
+                                      );
+                                    }
+                                    return Text(timePerQuestion.toString());
+                                  },
                                 ),
                               ),
                             ),
@@ -141,7 +153,12 @@ class QuestionPage extends StatelessWidget {
                                     : () {
                                         answer.value = 'answer_a';
                                         if (answer.value ==
-                                            questionData[index].correctAnswer) {
+                                                questionData[index]
+                                                    .correctAnswer &&
+                                            questionData[index]
+                                                    .correctAnswers
+                                                    .answerACorrect ==
+                                                true) {
                                           score += 10;
                                         }
                                         visibleAnswer.value = true;
@@ -199,7 +216,11 @@ class QuestionPage extends StatelessWidget {
                                     : () {
                                         answer.value = 'answer_b';
                                         if (answer.value ==
-                                            questionData[index].correctAnswer) {
+                                                questionData[index]
+                                                    .correctAnswer &&
+                                            questionData[index]
+                                                .correctAnswers
+                                                .answerBCorrect) {
                                           score += 10;
                                         }
                                         visibleAnswer.value = true;
@@ -258,8 +279,11 @@ class QuestionPage extends StatelessWidget {
                                           : () {
                                               answer.value = 'answer_c';
                                               if (answer.value ==
+                                                      questionData[index]
+                                                          .correctAnswer &&
                                                   questionData[index]
-                                                      .correctAnswer) {
+                                                      .correctAnswers
+                                                      .answerCCorrect) {
                                                 score += 10;
                                               }
                                               visibleAnswer.value = true;
@@ -323,8 +347,11 @@ class QuestionPage extends StatelessWidget {
                                           : () {
                                               answer.value = 'answer_d';
                                               if (answer.value ==
+                                                      questionData[index]
+                                                          .correctAnswer &&
                                                   questionData[index]
-                                                      .correctAnswer) {
+                                                      .correctAnswers
+                                                      .answerDCorrect) {
                                                 score += 10;
                                               }
                                               visibleAnswer.value = true;
@@ -388,8 +415,12 @@ class QuestionPage extends StatelessWidget {
                                           : () {
                                               answer.value = 'answer_e';
                                               if (answer.value ==
+                                                      questionData[index]
+                                                          .correctAnswer &&
                                                   questionData[index]
-                                                      .correctAnswer) {
+                                                          .correctAnswers
+                                                          .answerECorrect ==
+                                                      true) {
                                                 score += 10;
                                               }
                                               visibleAnswer.value = true;
@@ -453,8 +484,11 @@ class QuestionPage extends StatelessWidget {
                                           : () {
                                               answer.value = 'answer_f';
                                               if (answer.value ==
+                                                      questionData[index]
+                                                          .correctAnswer &&
                                                   questionData[index]
-                                                      .correctAnswer) {
+                                                      .correctAnswers
+                                                      .answerFCorrect) {
                                                 score += 10;
                                               }
                                               visibleAnswer.value = true;

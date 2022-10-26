@@ -12,30 +12,56 @@ class QuestionAPI extends GetConnect {
       required String difficulty,
       required String limit,
       required String tags}) async {
-    final res = await get('https://quizapi.io/api/v1/questions',
-        contentType: 'aplication/json',
-        query: {
-          'apiKey': API_KEY,
-          'limit': limit,
-          'difficulty': difficulty,
-          'category': category,
-          'tags': tags,
-        });
+    const endpoint = 'https://quizapi.io/api/v1/questions';
+    final res = await get(endpoint, contentType: 'aplication/json', query: {
+      'apiKey': API_KEY,
+      'limit': limit,
+      'difficulty': difficulty,
+      'category': category,
+      'tags': tags,
+    }).timeout(const Duration(seconds: 10));
 
     if (res.isOk) {
-      final data = Question.questionFromSnapshot(res.body);
+      List<Question> tempData = Question.questionFromSnapshot(res.body);
+      List<Question> resData = List.from(tempData);
 
-      // validate answer
-      for (var mapData in data) {
+      debugPrint('foreach tempData length: ${tempData.length} (Before)');
+      debugPrint('foreach resData length: ${resData.length} (Before)');
+
+      // for checking resData
+      for (var mapData in tempData) {
+        // validate answer
         mapData.correctAnswer = searchCorrectAnswer(mapData.correctAnswers);
-
-        // avoid multiple answer
-        if (mapData.multipleCorrectAnswers == true) {
-          data.remove(mapData);
-        }
       }
 
-      return right(data);
+      debugPrint('foreach tempData length: ${tempData.length} (After)');
+      debugPrint('foreach resData length: ${resData.length} (After)');
+
+      //!   BUG!
+      // request the question if length < 20
+      // if (resData.length < 20) {
+      //   int restQuestion = 20 - resData.length;
+      //   debugPrint('masuk if');
+      //   await get(endpoint, contentType: 'aplication/json', query: {
+      //     'apiKey': API_KEY,
+      //     'limit': restQuestion.toString(),
+      //     'difficulty': difficulty,
+      //     'category': category,
+      //     'tags': tags,
+      //   }).timeout(const Duration(seconds: 10)).then((response) {
+      //     List<Question> listResponse =
+      //         Question.questionFromSnapshot(response.body);
+      //     for (var element in listResponse) {
+      //       resData.add(element);
+      //       if (element.multipleCorrectAnswers == true) {
+      //         debugPrint('ada soal yang jawabannya double (last)!');
+      //       }
+      //     }
+      //     debugPrint(resData.length.toString());
+      //   });
+      // }
+
+      return right(resData);
     } else if (res.body == null) {
       debugPrint('Tidak ada data');
       return left('Tidak ada data');

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:quiz_app/pages/detail_question.dart';
 
 import '../api/question.api.dart';
 import '../pages/question.page.dart';
@@ -31,7 +32,11 @@ getQuestionData(BuildContext context,
         ),
       ),
       (r) => Get.to(
-        () => QuestionPage(questionData: r),
+        () => DetailQuestionPage(
+            questionData: r,
+            category: r[0].category,
+            timePerQuestion: '15',
+            totalQuestion: r.length.toString()),
       ),
     ),
   );
