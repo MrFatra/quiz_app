@@ -27,7 +27,7 @@ class DetailQuestionPage extends StatelessWidget {
           children: [
             Text('Question Category : $category'),
             Text('Question Total : $totalQuestion'),
-            Text('Time per-Question : $timePerQuestion'),
+            Text('Time per-Question : $timePerQuestion seconds'),
             TextButton(
                 onPressed: () => Get.to(
                       () => QuestionPage(

@@ -1,5 +1,4 @@
 import 'package:quiz_app/model/answer.model.dart';
-import 'package:quiz_app/model/correct_answer.model.dart';
 
 String checkLastAnswer(Answers answers) {
   if (answers.answerA == '') {

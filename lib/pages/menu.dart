@@ -1,18 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
-import 'package:quiz_app/api/question.api.dart';
-import 'package:quiz_app/auth/question.auth.dart';
-import 'package:quiz_app/constant.dart';
-import 'package:quiz_app/utils/difficulty.dart';
-import 'package:quiz_app/widgets/loading_dialog.dart';
-
-// third-party package
 import 'package:sizer/sizer.dart';
 
-import 'question.page.dart';
+import '../auth/question.auth.dart';
+import '../constant.dart';
+import '../utils/difficulty.dart';
 
 class MenuPage extends StatelessWidget {
   const MenuPage({super.key});

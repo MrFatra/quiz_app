@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:quiz_app/pages/detail_question.dart';
 
 import '../api/question.api.dart';
-import '../pages/question.page.dart';
 import '../widgets/loading_dialog.dart';
 
 getQuestionData(BuildContext context,
@@ -35,7 +34,7 @@ getQuestionData(BuildContext context,
         () => DetailQuestionPage(
             questionData: r,
             category: r[0].category,
-            timePerQuestion: '15',
+            timePerQuestion: '60',
             totalQuestion: r.length.toString()),
       ),
     ),

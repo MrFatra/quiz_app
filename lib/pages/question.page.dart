@@ -1,10 +1,13 @@
+import 'dart:async';
+
+import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:quiz_app/constant.dart';
-import 'package:quiz_app/pages/menu.dart';
+import 'package:quiz_app/pages/result_answer.dart';
 import 'package:sizer/sizer.dart';
-import 'package:timer_builder/timer_builder.dart';
 
+import '../constant.dart';
+import '../pages/menu.dart';
 import '../model/question.model.dart';
 import '../utils/show_answer.dart';
 
@@ -24,6 +27,7 @@ class QuestionPage extends StatelessWidget {
     RxString answer = ''.obs;
     RxBool visibleAnswer = false.obs;
     RxBool answered = false.obs;
+    int timeTaken = 0;
 
     return Scaffold(
       body: PageView.builder(
@@ -31,6 +35,7 @@ class QuestionPage extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           controller: pageController,
           itemBuilder: (context, index) {
+            CountDownController countDownController = CountDownController();
             return Obx(
               () => Container(
                 padding: const EdgeInsets.only(
@@ -39,60 +44,62 @@ class QuestionPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Stack(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Align(
-                            alignment: const Alignment(-1, 1),
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(50),
-                              onTap: () => Get.off(() => const MenuPage()),
-                              child: Container(
-                                width: 30.w,
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: const Color(0x09000000),
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: const [
-                                    Icon(
-                                      Icons.arrow_back_rounded,
-                                    ),
-                                    Text(
-                                      'Back',
-                                    ),
-                                  ],
-                                ),
+                          InkWell(
+                            borderRadius: BorderRadius.circular(50),
+                            onTap: () => Get.off(() => const MenuPage()),
+                            child: Container(
+                              width: 30.w,
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: const Color(0x09000000),
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: const [
+                                  Icon(
+                                    Icons.arrow_back_rounded,
+                                  ),
+                                  Text(
+                                    'Back',
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                          Align(
-                            alignment: const Alignment(1, -1),
-                            child: Container(
-                              margin: const EdgeInsets.only(bottom: 15),
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: kPrimaryColor, width: 2),
-                                  shape: BoxShape.circle),
-                              child: CircleAvatar(
-                                backgroundColor: Colors.transparent,
-                                child: TimerBuilder.periodic(
-                                  const Duration(seconds: 1),
-                                  builder: (context) {
-                                    timePerQuestion -= 1;
-                                    if (timePerQuestion < 0) {
-                                      timePerQuestion = 15;
-                                      pageController.nextPage(
-                                        duration: const Duration(seconds: 1),
-                                        curve: Curves.fastLinearToSlowEaseIn,
-                                      );
-                                    }
-                                    return Text(timePerQuestion.toString());
-                                  },
-                                ),
-                              ),
+                          CircleAvatar(
+                            backgroundColor: Colors.transparent,
+                            // ! HERE
+                            child: CircularCountDownTimer(
+                              controller: countDownController,
+                              isReverse: true,
+                              isReverseAnimation: true,
+                              initialDuration: 0,
+                              duration: timePerQuestion,
+                              fillColor: kPrimaryColor,
+                              height: 30,
+                              ringColor: Colors.grey,
+                              width: 30,
+                              strokeWidth: 3.5,
+                              onComplete: () {
+                                countDownController.pause();
+                                visibleAnswer.value = true;
+                                answered.value = true;
+                                Timer.periodic(const Duration(seconds: 2),
+                                    (timer) {
+                                  visibleAnswer.value = false;
+                                  answered.value = false;
+                                  pageController.nextPage(
+                                      duration: const Duration(seconds: 2),
+                                      curve: Curves.fastLinearToSlowEaseIn);
+                                  countDownController.reset();
+                                  timer.cancel();
+                                });
+                              },
                             ),
                           ),
                         ],
@@ -154,15 +161,45 @@ class QuestionPage extends StatelessWidget {
                                         answer.value = 'answer_a';
                                         if (answer.value ==
                                                 questionData[index]
-                                                    .correctAnswer &&
+                                                    .correctAnswer ||
                                             questionData[index]
                                                     .correctAnswers
                                                     .answerACorrect ==
                                                 true) {
                                           score += 10;
                                         }
+                                        countDownController.pause();
+                                        timeTaken += (timePerQuestion -
+                                            int.parse(
+                                                countDownController.getTime()));
                                         visibleAnswer.value = true;
                                         answered.value = true;
+                                        Timer.periodic(
+                                            const Duration(milliseconds: 1500),
+                                            (timer) {
+                                          visibleAnswer.value = false;
+                                          answered.value = false;
+                                          pageController.nextPage(
+                                            duration:
+                                                const Duration(seconds: 2),
+                                            curve:
+                                                Curves.fastLinearToSlowEaseIn,
+                                          );
+
+                                          if (pageController.page!.toInt() ==
+                                              questionData.length - 1) {
+                                            Get.to(ResultAnswer(
+                                              correctAnswer:
+                                                  (score / 10).toInt(),
+                                              timeTaken: timeTaken,
+                                              totalQuestion:
+                                                  questionData.length,
+                                              totalScore: score.value,
+                                            ));
+                                          }
+
+                                          timer.cancel();
+                                        });
                                       },
                                 child: Row(
                                   children: [
@@ -217,14 +254,42 @@ class QuestionPage extends StatelessWidget {
                                         answer.value = 'answer_b';
                                         if (answer.value ==
                                                 questionData[index]
-                                                    .correctAnswer &&
+                                                    .correctAnswer ||
                                             questionData[index]
                                                 .correctAnswers
                                                 .answerBCorrect) {
                                           score += 10;
                                         }
                                         visibleAnswer.value = true;
+                                        countDownController.pause();
+                                        timeTaken += (timePerQuestion -
+                                            int.parse(
+                                                countDownController.getTime()));
                                         answered.value = true;
+                                        Timer.periodic(
+                                            const Duration(milliseconds: 1500),
+                                            (timer) {
+                                          visibleAnswer.value = false;
+                                          answered.value = false;
+                                          pageController.nextPage(
+                                            duration:
+                                                const Duration(seconds: 2),
+                                            curve:
+                                                Curves.fastLinearToSlowEaseIn,
+                                          );
+                                          if (pageController.page!.toInt() ==
+                                              questionData.length - 1) {
+                                            Get.to(ResultAnswer(
+                                              correctAnswer:
+                                                  (score / 10).toInt(),
+                                              timeTaken: timeTaken,
+                                              totalQuestion:
+                                                  questionData.length,
+                                              totalScore: score.value,
+                                            ));
+                                          }
+                                          timer.cancel();
+                                        });
                                       },
                                 child: Row(
                                   children: [
@@ -280,14 +345,44 @@ class QuestionPage extends StatelessWidget {
                                               answer.value = 'answer_c';
                                               if (answer.value ==
                                                       questionData[index]
-                                                          .correctAnswer &&
+                                                          .correctAnswer ||
                                                   questionData[index]
                                                       .correctAnswers
                                                       .answerCCorrect) {
                                                 score += 10;
                                               }
                                               visibleAnswer.value = true;
+                                              countDownController.pause();
+                                              timeTaken += (timePerQuestion -
+                                                  int.parse(countDownController
+                                                      .getTime()));
                                               answered.value = true;
+                                              Timer.periodic(
+                                                  const Duration(
+                                                      milliseconds: 1500),
+                                                  (timer) {
+                                                visibleAnswer.value = false;
+                                                answered.value = false;
+                                                pageController.nextPage(
+                                                  duration: const Duration(
+                                                      seconds: 2),
+                                                  curve: Curves
+                                                      .fastLinearToSlowEaseIn,
+                                                );
+                                                if (pageController.page!
+                                                        .toInt() ==
+                                                    questionData.length - 1) {
+                                                  Get.to(ResultAnswer(
+                                                    correctAnswer:
+                                                        (score / 10).toInt(),
+                                                    timeTaken: timeTaken,
+                                                    totalQuestion:
+                                                        questionData.length,
+                                                    totalScore: score.value,
+                                                  ));
+                                                }
+                                                timer.cancel();
+                                              });
                                             },
                                       child: Row(
                                         children: [
@@ -348,14 +443,44 @@ class QuestionPage extends StatelessWidget {
                                               answer.value = 'answer_d';
                                               if (answer.value ==
                                                       questionData[index]
-                                                          .correctAnswer &&
+                                                          .correctAnswer ||
                                                   questionData[index]
                                                       .correctAnswers
                                                       .answerDCorrect) {
                                                 score += 10;
                                               }
                                               visibleAnswer.value = true;
+                                              countDownController.pause();
+                                              timeTaken += (timePerQuestion -
+                                                  int.parse(countDownController
+                                                      .getTime()));
                                               answered.value = true;
+                                              Timer.periodic(
+                                                  const Duration(
+                                                      milliseconds: 1500),
+                                                  (timer) {
+                                                visibleAnswer.value = false;
+                                                answered.value = false;
+                                                pageController.nextPage(
+                                                  duration: const Duration(
+                                                      seconds: 2),
+                                                  curve: Curves
+                                                      .fastLinearToSlowEaseIn,
+                                                );
+                                                if (pageController.page!
+                                                        .toInt() ==
+                                                    questionData.length - 1) {
+                                                  Get.to(ResultAnswer(
+                                                    correctAnswer:
+                                                        (score / 10).toInt(),
+                                                    timeTaken: timeTaken,
+                                                    totalQuestion:
+                                                        questionData.length,
+                                                    totalScore: score.value,
+                                                  ));
+                                                }
+                                                timer.cancel();
+                                              });
                                             },
                                       child: Row(
                                         children: [
@@ -416,15 +541,45 @@ class QuestionPage extends StatelessWidget {
                                               answer.value = 'answer_e';
                                               if (answer.value ==
                                                       questionData[index]
-                                                          .correctAnswer &&
+                                                          .correctAnswer ||
                                                   questionData[index]
                                                           .correctAnswers
                                                           .answerECorrect ==
                                                       true) {
                                                 score += 10;
                                               }
+                                              countDownController.pause();
+                                              timeTaken += (timePerQuestion -
+                                                  int.parse(countDownController
+                                                      .getTime()));
                                               visibleAnswer.value = true;
                                               answered.value = true;
+                                              Timer.periodic(
+                                                  const Duration(
+                                                      milliseconds: 1500),
+                                                  (timer) {
+                                                visibleAnswer.value = false;
+                                                answered.value = false;
+                                                pageController.nextPage(
+                                                  duration: const Duration(
+                                                      seconds: 2),
+                                                  curve: Curves
+                                                      .fastLinearToSlowEaseIn,
+                                                );
+                                                if (pageController.page!
+                                                        .toInt() ==
+                                                    questionData.length - 1) {
+                                                  Get.to(ResultAnswer(
+                                                    correctAnswer:
+                                                        (score / 10).toInt(),
+                                                    timeTaken: timeTaken,
+                                                    totalQuestion:
+                                                        questionData.length,
+                                                    totalScore: score.value,
+                                                  ));
+                                                }
+                                                timer.cancel();
+                                              });
                                             },
                                       child: Row(
                                         children: [
@@ -485,14 +640,44 @@ class QuestionPage extends StatelessWidget {
                                               answer.value = 'answer_f';
                                               if (answer.value ==
                                                       questionData[index]
-                                                          .correctAnswer &&
+                                                          .correctAnswer ||
                                                   questionData[index]
                                                       .correctAnswers
                                                       .answerFCorrect) {
                                                 score += 10;
                                               }
                                               visibleAnswer.value = true;
+                                              countDownController.pause();
+                                              timeTaken += (timePerQuestion -
+                                                  int.parse(countDownController
+                                                      .getTime()));
                                               answered.value = true;
+                                              Timer.periodic(
+                                                  const Duration(
+                                                      milliseconds: 1500),
+                                                  (timer) {
+                                                visibleAnswer.value = false;
+                                                answered.value = false;
+                                                pageController.nextPage(
+                                                  duration: const Duration(
+                                                      seconds: 2),
+                                                  curve: Curves
+                                                      .fastLinearToSlowEaseIn,
+                                                );
+                                                if (pageController.page!
+                                                        .toInt() ==
+                                                    questionData.length - 1) {
+                                                  Get.to(ResultAnswer(
+                                                    correctAnswer:
+                                                        (score / 10).toInt(),
+                                                    timeTaken: timeTaken,
+                                                    totalQuestion:
+                                                        questionData.length,
+                                                    totalScore: score.value,
+                                                  ));
+                                                }
+                                                timer.cancel();
+                                              });
                                             },
                                       child: Row(
                                         children: [
@@ -553,8 +738,38 @@ class QuestionPage extends StatelessWidget {
                                           ? null
                                           : () {
                                               score += 10;
+                                              countDownController.pause();
+                                              timeTaken += (timePerQuestion -
+                                                  int.parse(countDownController
+                                                      .getTime()));
                                               visibleAnswer.value = true;
                                               answered.value = true;
+                                              Timer.periodic(
+                                                  const Duration(
+                                                      milliseconds: 1500),
+                                                  (timer) {
+                                                visibleAnswer.value = false;
+                                                answered.value = false;
+                                                pageController.nextPage(
+                                                  duration: const Duration(
+                                                      seconds: 2),
+                                                  curve: Curves
+                                                      .fastLinearToSlowEaseIn,
+                                                );
+                                                if (pageController.page!
+                                                        .toInt() ==
+                                                    questionData.length - 1) {
+                                                  Get.to(ResultAnswer(
+                                                    correctAnswer:
+                                                        (score / 10).toInt(),
+                                                    timeTaken: timeTaken,
+                                                    totalQuestion:
+                                                        questionData.length,
+                                                    totalScore: score.value,
+                                                  ));
+                                                }
+                                                timer.cancel();
+                                              });
                                             },
                                       child: Row(
                                         children: [
@@ -594,20 +809,7 @@ class QuestionPage extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Align(
-                        alignment: Alignment(-1, 1),
-                        child: answered.value
-                            ? TextButton(
-                                onPressed: () {
-                                  visibleAnswer.value = false;
-                                  answered.value = false;
-                                  pageController.nextPage(
-                                      duration: const Duration(seconds: 1),
-                                      curve: Curves.fastLinearToSlowEaseIn);
-                                },
-                                child: Text('Next'))
-                            : null,
-                      ),
+                      // ! ALIGN HERE
                     ],
                   ),
                 ),
