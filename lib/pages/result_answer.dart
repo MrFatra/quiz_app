@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../pages/menu.dart';
 
 class ResultAnswer extends StatelessWidget {
   const ResultAnswer({
@@ -26,6 +29,10 @@ class ResultAnswer extends StatelessWidget {
             Text('Correct Answer : $correctAnswer'),
             Text('Total Score : $totalScore'),
             Text(correctAnswer < 10 ? 'TRY AGAIN!' : 'CONGRATULATIONS!'),
+            TextButton(
+              onPressed: () => Get.off(() => const MenuPage()),
+              child: Text('OK'),
+            )
           ],
         ),
       ),
